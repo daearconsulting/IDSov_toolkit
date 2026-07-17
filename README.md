@@ -150,12 +150,7 @@ both into machine-readable provenance records.
 ## Connected Repositories
 
 This toolkit is the canonical source for sovereignty infrastructure
-used across Daear Consulting's Earth data science repos:
-
-- **tribal_water_monitoring** - Surface water and groundwater analysis
-- **he_sapa_mining_twin** - Black Hills mining history and impacts
-- **tribal_soils_geology** - Soils and geology for Pine Ridge and Rosebud
-- **OLC Hackathon** - Climate resiliency and digital sovereignty
+used across Daear Consulting's Earth data science repos.
 
 ## Citation
 
