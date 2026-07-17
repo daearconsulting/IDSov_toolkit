@@ -158,7 +158,7 @@ used across Daear Consulting's Earth data science repos.
 If you use this toolkit in your work, please cite:
 
 > Jones, L. (2026). Tribal Data Sovereignty Toolkit. Daear Consulting, LLC.
-> https://github.com/daear-consulting/tribal-data-sovereignty-toolkit
+> https://github.com/daearconsulting/IDSov_toolkit
 
 And acknowledge the Tribal Nations whose data and lands informed its
 development:
