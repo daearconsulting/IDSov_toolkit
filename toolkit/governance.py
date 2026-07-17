@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 toolkit/governance.py
 Tribal Data Sovereignty Toolkit
@@ -11,8 +13,6 @@ python toolkit/governance.py --config config/nation.yaml --validate
 python toolkit/governance.py --config config/nation.yaml --statement
 python toolkit/governance.py --config config/nation.yaml --checklist
 """
-
-from __future__ import annotations
 
 import sys
 from pathlib import Path

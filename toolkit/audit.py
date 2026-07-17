@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 toolkit/audit.py
 Tribal Data Sovereignty Toolkit
@@ -20,8 +22,6 @@ Yes / No / Partial / N/A. The audit produces:
   - A formatted report suitable for inclusion in a data package
  
 """
-
-from __future__ import annotations
 
 from dataclasses import dataclass, field
 from typing import Literal
