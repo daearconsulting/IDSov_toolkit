@@ -1,6 +1,6 @@
 # Tribal Data Sovereignty Toolkit
 
-**Author:** Daear Consulting, LLC  
+**Author:** Lilly Jones, PhD  
 **Version:** 1.0.0  
 **Frameworks:** OCAP® | CARE | FAIR | IEEE 2890-2025  
 **License:** GNU Affero GPL 3.0
