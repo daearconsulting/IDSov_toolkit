@@ -1,0 +1,171 @@
+# nation_template.yaml
+# Tribal Data Sovereignty Toolkit Nation Configuration
+#
+# This is the single file you edit to adapt the toolkit for
+# any Tribal Nation. All modules, notebooks, and templates
+# read from this file.
+#
+# INSTRUCTIONS:
+#   1. Copy this file to config/nation.yaml
+#   2. Fill in every field below
+#   3. Run: python toolkit/governance.py --validate
+#      to confirm your configuration is complete
+#
+# Questions? Contact Daear Consulting, LLC
+
+# Nation identity
+nation:
+  name:        "Oglala Lakota"          # Primary Nation name
+  collective:  "Oceti Sakowin"          # Broader collective (if applicable)
+  territory:   "Pine Ridge Reservation" # Territory/Reservation name
+
+  # Census TIGER NAME field value (for boundary loading)
+  census_name: "Pine Ridge"
+
+  # Language (used in acknowledgments and cultural context)
+  language:    "Lakota"
+
+  # Demonym (how members of the Nation refer to themselves)
+  demonym:     "Oglala Lakota"
+
+# Territory
+territory:
+  # Bounding box (WGS84: west, south, east, north)
+  bbox:
+    west:  -103.5
+    south:   42.5
+    east:  -101.5
+    north:   43.8
+
+  # Approximate centroid (lat, lon)
+  centroid:
+    lat:  43.1
+    lon: -102.5
+
+# Treaty and legal provenance
+# Fill this section carefully as it appears on every data product
+# and provenance record produced by the toolkit.
+provenance:
+  treaty_name:     "1868 Fort Laramie Treaty"
+  treaty_territory: "Great Sioux Reservation, including He Sapa (Black Hills)"
+  treaty_status: >
+    The lands of Pine Ridge Reservation are the sovereign territory of the
+    Oglala Lakota people. Federal data collection on these lands does not
+    transfer authority over Tribal resources to federal agencies or researchers.
+
+  # Relevant legal citations
+  legal_citations:
+    - "United States v. Sioux Nation of Indians, 448 U.S. 371 (1980)"
+
+  # Subsurface-specific note (omit if not relevant)
+  subsurface_note: >
+    Subsurface geological and hydrological data describing Tribal lands is
+    subject to OCAP® principles. Ownership and stewardship rights belong
+    to the Oglala Lakota Nation.
+
+# Data stewardship
+stewardship:
+  # Primary Tribal department responsible for data governance
+  department:  "Natural Resources Department"
+  contact_url: ""   # Add Tribal department website if publicly available
+  contact_note: >
+    All data describing Pine Ridge lands and communities should be reviewed
+    by and shared with the Natural Resources Department before publication.
+
+# Governance frameworks
+# The toolkit implements these four frameworks as a coherent stack.
+# Each can be enabled or disabled independently.
+frameworks:
+  ocap:
+    enabled:   true
+    reference: "https://fnigc.ca/ocap-training/"
+    note: >
+      The First Nations Information Governance Centre's framework for
+      Ownership, Control, Access, and Possession of Indigenous data.
+
+  care:
+    enabled:   true
+    reference: "https://www.gida-global.org/care"
+    note: >
+      CARE Principles: Collective Benefit, Authority to Control,
+      Responsibility, Ethics. Governs ethical obligations that
+      FAIR alone does not address.
+
+  fair:
+    enabled:   true
+    reference: "https://www.go-fair.org/fair-principles/"
+    note: >
+      FAIR Principles: Findable, Accessible, Interoperable, Reusable.
+      Governs technical standards for data management.
+
+  ieee_2890:
+    enabled:   true
+    reference: "https://standards.ieee.org/ieee/2890/10318/"
+    note: >
+      IEEE 2890-2025: Recommended Practice for Provenance of Indigenous
+      Peoples' Data. The first international standard for Indigenous
+      data provenance.
+
+  local_contexts:
+    enabled:   false   # Set true if your Nation uses TK Labels
+    reference: "https://localcontexts.org/"
+    label_type: null   # ex. "TK Notice", "TK Attribution Incomplete"
+
+# Data classification schema
+# Define the classification tiers for data collected on or about this Nation.
+# Customize categories and descriptions to match Tribal policy.
+data_classification:
+  tiers:
+    - id:          "PUBLIC"
+      label:       "Public"
+      description: >
+        Data that may be freely shared. Does not contain sensitive
+        cultural, locational, or personal information.
+      examples:
+        - "Published environmental monitoring summaries"
+        - "Aggregated climate statistics"
+
+    - id:          "COMMUNITY"
+      label:       "Community: Tribal members only"
+      description: >
+        Data intended for Tribal members and community partners.
+        Not for general public release.
+      examples:
+        - "Detailed water quality sampling locations"
+        - "Community health data aggregates"
+
+    - id:          "RESTRICTED"
+      label:       "Restricted: Tribal governance only"
+      description: >
+        Sensitive data restricted to Tribal governance bodies and
+        authorized staff. Requires explicit Tribal authorization to share.
+      examples:
+        - "Sacred site locations"
+        - "Individual health or economic records"
+        - "Traditional knowledge documentation"
+
+    - id:          "GITIGNORED"
+      label:       "Never commit: local only"
+      description: >
+        Data that must never be uploaded to version control or cloud
+        storage. Stays on local systems under Tribal control.
+      examples:
+        - "Field-collected Tribal data"
+        - "Personally identifiable information"
+        - "Confidential governance documents"
+
+# Contact and attribution
+attribution:
+  # How Tribal Nation should be credited in publications
+  citation_format: >
+    Data describing the lands and communities of the Oglala Lakota people,
+    Pine Ridge Reservation. Used with awareness of Tribal sovereignty and
+    subject to OCAP® governance principles.
+
+  # Standard acknowledgment for publications
+  acknowledgment: >
+    The authors acknowledge that this research describes the lands,
+    waters, and communities of the Oglala Lakota people of Pine Ridge
+    Reservation. We are grateful for the opportunity to work in
+    relationship with the Oglala Lakota Nation and commit to returning
+    findings to the community and supporting Tribal data sovereignty.

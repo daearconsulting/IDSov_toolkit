@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tribal-data-sovereignty-toolkit"
+version = "1.0.0"
+requires-python = ">=3.10"
+dependencies = [
+    "pyyaml",
+    "pandas",
+    "geopandas",
+    "shapely>=2.0",
+    "requests",
+    "scipy",
+    "matplotlib",
+    "openpyxl",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["toolkit*"]

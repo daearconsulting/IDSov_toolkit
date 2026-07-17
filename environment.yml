@@ -1,0 +1,22 @@
+name: tribal-data-sovereignty
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pyyaml
+  - numpy
+  - pandas
+  - geopandas
+  - shapely>=2.0
+  - requests
+  - scipy
+  - matplotlib
+  - openpyxl
+  - jupyter
+  - jupyterlab
+  - ipykernel
+  - tenacity
+  - pip
+  - pip:
+    - sciencebasepy
