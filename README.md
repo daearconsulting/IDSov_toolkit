@@ -5,6 +5,7 @@
 **Frameworks:** OCAP® | CARE | FAIR | IEEE 2890-2025  
 **License:** GNU Affero GPL 3.0
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21405019.svg)](https://doi.org/10.5281/zenodo.xxxxxxx)
 
 ## Overview
 
