@@ -5,7 +5,7 @@
 
 ### I don't write code, I just need governance documents
 
-No installation required. Go straight to `templates/`:
+No installation required. Go straight to `Forms/`:
 
 | Template | Use it for |
 |---|---|
@@ -22,7 +22,7 @@ Fill in the bracketed fields. That's it.
 **- Read notebook 01 (Frameworks).** Understand what OCAP®, CARE,
 FAIR, and IEEE 2890-2025 require of you before you touch any data.
 
-**- Fill out `templates/community_consent_framework.md`** before
+**- Fill out `Forms/community_consent_framework.md`** before
 data collection begins. Get it reviewed by the Tribal department.
 
 **- Set up the toolkit in Python:**
@@ -51,7 +51,7 @@ ctx.print_acknowledgment()   # call at the top of every notebook
 
 ```python
 # After loading a GeoDataFrame from a federal source
-gdf = ctx.attach_provenance(gdf, source_key="usgs_nwis_streamflow")
+gdf = ctx.attach_provenance(gdf, source_key="usgs_nwis_streamflow", classification="PUBLIC")
 
 # Before sharing any output
 print(ctx.generate_citations(["usgs_nwis_streamflow", "usda_ssurgo"]))
@@ -133,4 +133,3 @@ Labels, custom governance schemas is a consulting engagement.
 - CARE: https://www.gida-global.org/care
 - FAIR: https://www.go-fair.org/fair-principles/
 - IEEE 2890-2025: https://standards.ieee.org/ieee/2890/10318/
-

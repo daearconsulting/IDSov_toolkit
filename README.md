@@ -5,7 +5,7 @@
 **Frameworks:** OCAP® | CARE | FAIR | IEEE 2890-2025  
 **License:** GNU Affero GPL 3.0
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21405019.svg)](https://doi.org/10.5281/zenodo.xxxxxxx)
+> [![DOI](https://zenodo.org/badge/1282454716.svg)](https://doi.org/10.5281/zenodo.21405018)
 
 ## Overview
 
@@ -22,7 +22,7 @@ designed to be modular so it can be adapted for any Tribal Nation.
 
 | Audience | Start here |
 |---|---|
-| Tribal data managers and natural resource staff | `templates/` then notebook 04 |
+| Tribal data managers and natural resource staff | `Forms/` then notebook 04 |
 | Researchers working with Tribal data | Notebooks 00–03 |
 | Students and educators | Full notebook series 00–06 |
 | Hackathon and workshop participants | Notebook 05 (SEEDS Workflow) |
@@ -33,7 +33,7 @@ designed to be modular so it can be adapted for any Tribal Nation.
 tribal-data-sovereignty-toolkit/
 │
 ├── toolkit/                    # Python modules
-│   ├── sovereignty.py          # Core — NationConfig, SovereigntyContext
+│   ├── sovereignty.py          # Core with NationConfig, SovereigntyContext
 │   ├── provenance.py           # IEEE 2890-2025 provenance records
 │   ├── governance.py           # Statements, checklists, agreements
 │   └── audit.py                # Sovereignty audit (OCAP® + CARE + FAIR + IEEE 2890)
@@ -72,11 +72,11 @@ tribal-data-sovereignty-toolkit/
 
 ### For non-coders: use the templates directly
 
-1. Open `templates/data_sovereignty_statement.md` and fill in the
+1. Open `Forms/data_sovereignty_statement.md` and fill in the
    bracketed fields
-2. Open `templates/ieee_2890_compliance_checklist.xlsx` to audit your
+2. Open `Forms/ieee_2890_compliance_checklist.xlsx` to audit your
    dataset
-3. Open `templates/tribal_data_catalog.xlsx` to catalog your data assets
+3. Open `Forms/tribal_data_catalog.xlsx` to catalog your data assets
 
 No installation required.
 
@@ -111,7 +111,7 @@ ctx = SovereigntyContext.from_config("config/nation.yaml")
 ctx.print_acknowledgment()
 
 # Attach provenance to any GeoDataFrame
-gdf = ctx.attach_provenance(gdf, source_key="usgs_nwis_streamflow")
+gdf = ctx.attach_provenance(gdf, source_key="usgs_nwis_streamflow", classification="PUBLIC")
 
 # Generate citations
 print(ctx.generate_citations(["usgs_nwis_streamflow", "usda_ssurgo"]))
@@ -127,7 +127,7 @@ default example. To adapt for another Nation:
 3. Run `python toolkit/governance.py --config config/nation.yaml --validate`
 4. All notebooks, templates, and modules auto-populate from your config
 
-See `notebooks/06_adaptation_guide.ipynb` for a complete walkthrough.
+See `Notebooks/06_adaptation_guide.ipynb` for a complete walkthrough.
 
 **For Nation-specific consulting assistance** such as integrating existing Tribal
 data codes, Local Contexts TK Labels, or Tribal data governance policies,
@@ -135,7 +135,10 @@ contact Daear Consulting, LLC.
 
 ## The Governance Framework Stack
 
-This toolkit implements four complementary frameworks:
+This toolkit supports complementary frameworks. A Nation determines which are
+applicable and may replace or extend them with its own policies. In particular,
+OCAP® was developed for First Nations in Canada and must not be assumed to apply
+outside that context.
 
 | Framework | Governs | Reference |
 |---|---|---|

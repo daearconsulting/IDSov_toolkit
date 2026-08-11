@@ -77,7 +77,7 @@ class ProvenanceRecord:
     collection_date:    str = ""
 
     # Governancea 
-    classification:     str = "PUBLIC"
+    classification:     str = "UNCLASSIFIED"
     frameworks:         str = ""
     stewardship_dept:   str = ""
 
@@ -257,6 +257,8 @@ class ProvenanceBuilder:
     def build(self) -> ProvenanceRecord:
         if "dataset_name" not in self._data:
             self._data["dataset_name"] = self._data["record_id"]
+        if "classification" not in self._data:
+            raise ValueError("An explicit classification is required before building a provenance record.")
         return ProvenanceRecord(**self._data)
 
 

@@ -1,0 +1,19 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -e ".[dev]"
+      - run: ruff check toolkit tests
+      - run: pytest
+      - run: pytest --nbmake Notebooks/00_orientation.ipynb Notebooks/01_frameworks.ipynb Notebooks/02_data_provenance.ipynb Notebooks/03_sovereignty_audit.ipynb Notebooks/04_collection_design.ipynb Notebooks/06_adaptation_guide.ipynb

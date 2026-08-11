@@ -72,7 +72,7 @@ class NationConfig:
         except ImportError:
             raise ImportError("PyYAML is required: pip install pyyaml")
 
-        with open(path) as f:
+        with open(path, encoding="utf-8") as f:
             cfg = yaml.safe_load(f)
 
         n  = cfg["nation"]
@@ -123,6 +123,8 @@ class NationConfig:
             warnings.append("stewardship.department is required")
         if not self.active_frameworks:
             warnings.append("At least one governance framework must be enabled")
+        if not self.classification_tiers:
+            warnings.append("At least one data classification tier must be defined")
         return warnings
 
 
@@ -370,7 +372,6 @@ class SovereigntyContext:
 
         if include_data_sources and source_keys:
             print("  DATA SOURCES")
-            print(" + ")
             for key in source_keys:
                 src = self._sources.get(key)
                 if not src:
@@ -420,7 +421,7 @@ class SovereigntyContext:
         self,
         gdf,
         source_key: str,
-        classification: str = "PUBLIC",
+        classification: str | None = None,
         additional: dict | None = None,
     ):
         """
@@ -435,6 +436,11 @@ class SovereigntyContext:
         Returns
         Annotated GeoDataFrame (copy)
         """
+        if not classification:
+            raise ValueError("An explicit classification is required before attaching provenance.")
+        valid_tiers = {tier.get("id") for tier in self.config.classification_tiers}
+        if classification not in valid_tiers:
+            raise ValueError(f"Unknown classification {classification!r}. Valid tiers: {sorted(valid_tiers)}")
         cfg = self.config
         src = self._sources.get(source_key, {})
         out = gdf.copy()
@@ -465,7 +471,7 @@ class SovereigntyContext:
         self,
         dataset_name: str,
         source_keys: list[str] | None = None,
-        classification: str = "PUBLIC",
+        classification: str | None = None,
         analyst_name: str = "",
         notes: str = "",
     ) -> str:
@@ -474,6 +480,8 @@ class SovereigntyContext:
         Returns a formatted string suitable for inclusion in a README
         or data package.
         """
+        if not classification:
+            raise ValueError("An explicit classification is required before generating a governance report.")
         import datetime
         cfg  = self.config
         date = datetime.date.today().isoformat()

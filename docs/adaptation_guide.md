@@ -209,7 +209,7 @@ python toolkit/governance.py --config config/nation.yaml --checklist
 # Generate a data sharing agreement template
 python toolkit/governance.py --config config/nation.yaml \
     --agreement "My Research Project" \
-    --output templates/data_sharing_agreement.txt
+    --output Forms/data_sharing_agreement.txt
 ```
 
 Review each output carefully. Does the treaty language accurately represent
@@ -239,7 +239,9 @@ ctx.register_source("navajo_epa_monitoring", {
 })
 
 # Now use this key in provenance records
-gdf = ctx.attach_provenance(gdf, source_key="navajo_epa_monitoring")
+gdf = ctx.attach_provenance(
+    gdf, source_key="navajo_epa_monitoring", classification="COMMUNITY"
+)
 ```
 
 ## Step 5: Connect to your analysis repos
