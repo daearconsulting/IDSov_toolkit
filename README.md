@@ -175,5 +175,5 @@ see LICENSE file.
 
 The governance frameworks referenced by this toolkit (OCAP®, CARE, FAIR,
 IEEE 2890-2025) are governed by their respective organizations. This
-toolkit implements them but does not own or modify them. X
+toolkit implements them but does not own or modify them.
 
