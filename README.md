@@ -1,8 +1,8 @@
 # Tribal Data Sovereignty Toolkit
 
-**Author:** Lilly Jones, PhD  
-**Version:** 1.0.0  
-**Frameworks:** OCAP® | CARE | FAIR | IEEE 2890-2025  
+**Author:** Lilly Jones, PhD                         
+**Version:** 1.0.0                                     
+**Frameworks:** OCAP® | CARE | FAIR | IEEE 2890-2025                             
 **License:** GNU Affero GPL 3.0
 
 > [![DOI](https://zenodo.org/badge/1282454716.svg)](https://doi.org/10.5281/zenodo.21405018)
@@ -22,15 +22,15 @@ designed to be modular so it can be adapted for any Tribal Nation.
 
 | Audience | Start here |
 |---|---|
-| Tribal data managers and natural resource staff | `Forms/` then notebook 04 |
-| Researchers working with Tribal data | Notebooks 00–03 |
-| Students and educators | Full notebook series 00–06 |
-| Hackathon and workshop participants | Notebook 05 (SEEDS Workflow) |
+| Tribal data managers and natural resource staff | [`Forms/`](Forms/) then [notebook 04](Notebooks/04_collection_design.ipynb) |
+| Researchers working with Tribal data | [Notebooks 00–03](Notebooks/) |
+| Students and educators | [Full notebook series 00–06](Notebooks/) |
+| Hackathon and workshop participants | [Notebook 05 (SEEDS Workflow)](Notebooks/05_seeds_workflow.ipynb) |
 
 ## Repository Structure
 
 ```
-tribal-data-sovereignty-toolkit/
+IDSov_toolkit/
 │
 ├── toolkit/                    # Python modules
 │   ├── sovereignty.py          # Core with NationConfig, SovereigntyContext
@@ -38,7 +38,7 @@ tribal-data-sovereignty-toolkit/
 │   ├── governance.py           # Statements, checklists, agreements
 │   └── audit.py                # Sovereignty audit (OCAP® + CARE + FAIR + IEEE 2890)
 │
-├── notebooks/                  # Teaching series
+├── Notebooks/                  # Teaching series
 │   ├── 00_orientation.ipynb    # Start here
 │   ├── 01_frameworks.ipynb     # OCAP®, CARE, FAIR, IEEE 2890-2025
 │   ├── 02_data_provenance.ipynb
@@ -47,7 +47,7 @@ tribal-data-sovereignty-toolkit/
 │   ├── 05_seeds_workflow.ipynb  # Responsible Earth Data Science
 │   └── 06_adaptation_guide.ipynb
 │
-├── templates/                  # Document toolkit (no coding required)
+├── Forms/                      # Document toolkit (no coding required)
 │   ├── data_sovereignty_statement.md
 │   ├── community_consent_framework.md
 │   ├── ieee_2890_compliance_checklist.xlsx
@@ -70,6 +70,11 @@ tribal-data-sovereignty-toolkit/
 
 ## Quick Start
 
+> [!IMPORTANT]
+> Do not commit restricted, confidential, culturally sensitive, or otherwise
+> non-public Tribal data to Git, example outputs, or public notebooks. Follow
+> the relevant Nation's governance rules and approved storage requirements.
+
 ### For non-coders: use the templates directly
 
 1. Open `Forms/data_sovereignty_statement.md` and fill in the
@@ -84,8 +89,8 @@ No installation required.
 
 ```bash
 # Clone the repo
-git clone https://github.com/daear-consulting/tribal-data-sovereignty-toolkit
-cd tribal-data-sovereignty-toolkit
+git clone https://github.com/daearconsulting/IDSov_toolkit.git
+cd IDSov_toolkit
 
 # Create and activate the environment
 conda env create -f environment.yml
@@ -127,7 +132,25 @@ default example. To adapt for another Nation:
 3. Run `python toolkit/governance.py --config config/nation.yaml --validate`
 4. All notebooks, templates, and modules auto-populate from your config
 
-See `Notebooks/06_adaptation_guide.ipynb` for a complete walkthrough.
+See the [adaptation guide notebook](Notebooks/06_adaptation_guide.ipynb) for a
+complete walkthrough, or begin with the [quickstart](docs/quickstart.md).
+
+## Testing
+
+Install the development dependencies and run the unit tests:
+
+```bash
+pip install -e ".[dev]"
+pytest
+```
+
+To execute the notebooks covered by continuous integration:
+
+```bash
+pytest --nbmake Notebooks/00_orientation.ipynb Notebooks/01_frameworks.ipynb \
+  Notebooks/02_data_provenance.ipynb Notebooks/03_sovereignty_audit.ipynb \
+  Notebooks/04_collection_design.ipynb Notebooks/06_adaptation_guide.ipynb
+```
 
 **For Nation-specific consulting assistance** such as integrating existing Tribal
 data codes, Local Contexts TK Labels, or Tribal data governance policies,
@@ -163,6 +186,8 @@ If you use this toolkit in your work, please cite:
 > Jones, L. (2026). Tribal Data Sovereignty Toolkit. Daear Consulting, LLC.
 > https://github.com/daearconsulting/IDSov_toolkit
 
+Machine-readable citation metadata is available in [`citation.cff`](citation.cff).
+
 And acknowledge the Tribal Nations whose data and lands informed its
 development:
 
@@ -171,9 +196,8 @@ development:
 
 ## License
 
-see LICENSE file.
+See the [GNU Affero General Public License v3.0](LICENSE).
 
 The governance frameworks referenced by this toolkit (OCAP®, CARE, FAIR,
 IEEE 2890-2025) are governed by their respective organizations. This
 toolkit implements them but does not own or modify them.
-

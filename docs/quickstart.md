@@ -28,8 +28,8 @@ data collection begins. Get it reviewed by the Tribal department.
 **- Set up the toolkit in Python:**
 
 ```bash
-git clone https://github.com/daear-consulting/tribal-data-sovereignty-toolkit
-cd tribal-data-sovereignty-toolkit
+git clone https://github.com/daearconsulting/IDSov_toolkit.git
+cd IDSov_toolkit
 
 conda env create -f environment.yml
 conda activate tribal-data-sovereignty
@@ -71,13 +71,13 @@ print(audit.report())
 Work through the notebooks in order:
 
 ```
-00_orientation.ipynb        ← 15 min  what is this and who is it for
-01_frameworks.ipynb         ← 45 min  OCAP®, CARE, FAIR, IEEE 2890-2025
-02_data_provenance.ipynb    ← 60 min  building and attaching provenance records
-03_sovereignty_audit.ipynb  ← 60 min  auditing a dataset
-04_collection_design.ipynb  ← 45 min  sovereignty-first field data design
-05_seeds_workflow.ipynb      ← 90 min full SEEDS cycle with live climate data
-06_adaptation_guide.ipynb   ← 30 min  adapting for a new Nation
+00_orientation.ipynb         - 15 min  what is this and who is it for
+01_frameworks.ipynb          - 45 min  OCAP®, CARE, FAIR, IEEE 2890-2025
+02_data_provenance.ipynb     - 60 min  building and attaching provenance records
+03_sovereignty_audit.ipynb   - 60 min  auditing a dataset
+04_collection_design.ipynb   - 45 min  sovereignty-first field data design
+05_seeds_workflow.ipynb      - 90 min full SEEDS cycle with live climate data
+06_adaptation_guide.ipynb    - 30 min  adapting for a new Nation
 ```
 
 Notebook 05 (SEEDS Workflow) is the standalone teaching notebook 
