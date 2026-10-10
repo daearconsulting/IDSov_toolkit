@@ -1,0 +1,87 @@
+nation:
+  name: Example River Nation (fictional)
+  collective: null
+  territory: Example River watershed (fictional)
+  census_name: ''
+  language: null
+  demonym: null
+territory:
+  bbox: null
+  centroid: null
+provenance:
+  treaty_name: ''
+  treaty_territory: ''
+  treaty_status: Fictional teaching policy. No actual Nation authority or treaty is
+    asserted.
+  legal_citations: []
+  subsurface_note: ''
+stewardship:
+  department: Example River Data Office (fictional)
+  contact_url: ''
+  contact_note: Draft review process for classroom discussion only.
+frameworks:
+  ocap:
+    enabled: false
+    reference: https://fnigc.ca/ocap-training/
+    note: First Nations-specific principles. Enable only after the Nation determines
+      applicability.
+  care:
+    enabled: true
+    reference: https://www.gida-global.org/care
+    note: 'CARE Principles: Collective Benefit, Authority to Control, Responsibility,
+      Ethics. Governs ethical obligations that FAIR alone does not address.'
+  fair:
+    enabled: true
+    reference: https://www.go-fair.org/fair-principles/
+    note: 'FAIR Principles: Findable, Accessible, Interoperable, Reusable. Governs
+      technical standards for data management.'
+  ieee_2890:
+    enabled: true
+    reference: https://standards.ieee.org/ieee/2890/10318/
+    note: Recommended Practice for Provenance of Indigenous Peoples' Data. Toolkit
+      conformance has not been established.
+  local_contexts:
+    enabled: false
+    reference: https://localcontexts.org/
+    label_type: null
+data_classification:
+  tiers:
+  - id: PUBLIC
+    label: Public
+    description: Access tier intended for public use after applicable publication
+      review. Classification alone does not establish authorization.
+    examples:
+    - Published environmental monitoring summaries
+    - Aggregated climate statistics
+  - id: COMMUNITY
+    label: 'Community: authorized members and partners'
+    description: Data intended for Tribal members and community partners. Not for
+      general public release.
+    examples:
+    - Detailed water quality sampling locations
+    - Community health data aggregates
+  - id: RESTRICTED
+    label: 'Restricted: Tribal governance only'
+    description: Sensitive data restricted to Tribal governance bodies and authorized
+      staff. Requires explicit Tribal authorization to share.
+    examples:
+    - Sacred site locations
+    - Individual health or economic records
+    - Traditional knowledge documentation
+attribution:
+  citation_format: Synthetic teaching data; no actual Nation findings.
+  acknowledgment: Fictional classroom scenario. No engagement or approval is asserted.
+handling:
+  approved_storage: Classroom outputs/teaching directory for synthetic records only
+  version_control: prohibited unless explicitly authorized
+  publication_status: pending
+  retention_review: End of teaching exercise
+analysis:
+  state_code: '39'
+  divisions:
+  - 7
+  - 8
+  spatial_rationale: Demonstration identifiers only; no geographic representativeness
+    is asserted.
+  start_year: 1980
+teaching: true

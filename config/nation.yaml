@@ -144,16 +144,6 @@ data_classification:
         - "Individual health or economic records"
         - "Traditional knowledge documentation"
 
-    - id:          "GITIGNORED"
-      label:       "Never commit: local only"
-      description: >
-        Data that must never be uploaded to version control or cloud
-        storage. Stays on local systems under Tribal control.
-      examples:
-        - "Field-collected Tribal data"
-        - "Personally identifiable information"
-        - "Confidential governance documents"
-
 # Contact and attribution
 attribution:
   # How Tribal Nation should be credited in publications
@@ -169,3 +159,10 @@ attribution:
     Reservation. We are grateful for the opportunity to work in
     relationship with the Oglala Lakota Nation and commit to returning
     findings to the community and supporting Tribal data sovereignty.
+
+# Storage and version-control restrictions migrated from the legacy GITIGNORED tier.
+# Access sensitivity is selected separately from the tiers above.
+handling:
+  approved_storage: 'Local systems under Tribal control; no cloud storage'
+  version_control: prohibited
+  publication_status: pending

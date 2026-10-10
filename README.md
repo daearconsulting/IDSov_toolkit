@@ -1,7 +1,7 @@
 # Tribal Data Sovereignty Toolkit
 
 **Author:** Lilly Jones, PhD                         
-**Version:** 1.0.0                                     
+**Version:** 1.2.0                                     
 **Frameworks:** OCAP® | CARE | FAIR | IEEE 2890-2025                             
 **License:** GNU Affero GPL 3.0
 
@@ -10,7 +10,7 @@
 ## Overview
 
 The Tribal Data Sovereignty Toolkit is a generalizable framework for
-implementing Indigenous data sovereignty principles in Earth data science
+supporting Nation-defined data governance decisions in Earth data science
 workflows. It provides Python modules, a teaching notebook series, and
 document templates that work together to make sovereignty a built-in
 feature of data pipelines.
@@ -79,7 +79,7 @@ IDSov_toolkit/
 
 1. Open `Forms/data_sovereignty_statement.md` and fill in the
    bracketed fields
-2. Open `Forms/ieee_2890_compliance_checklist.xlsx` to audit your
+2. Open `Forms/ieee_2890_compliance_checklist.xlsx` (legacy filename; self-assessment) to review your
    dataset
 3. Open `Forms/tribal_data_catalog.xlsx` to catalog your data assets
 
@@ -99,12 +99,12 @@ conda activate tribal-data-sovereignty
 # Install the toolkit as a package (optional but recommended)
 pip install -e .
 
-# Copy and edit the config
+# For a working project, copy and complete the blank config
 cp config/nation_template.yaml config/nation.yaml
-# Edit nation.yaml with your Nation's information
+# Resolve placeholders and document Nation-selected policies before validation
 
 # Validate
-python toolkit/governance.py --config config/nation.yaml --validate
+python -m toolkit.governance --config config/nation.yaml --validate
 ```
 
 ### In a notebook
@@ -124,13 +124,12 @@ print(ctx.generate_citations(["usgs_nwis_streamflow", "usda_ssurgo"]))
 
 ## Adapting for a New Nation
 
-The toolkit ships with an Oglala Lakota/Pine Ridge configuration as the
-default example. To adapt for another Nation:
+The toolkit ships with a clearly fictional Example River Nation teaching configuration and a separate blank working template. To adapt for another Nation:
 
 1. Copy `config/nation_template.yaml` to `config/nation.yaml`
-2. Edit every field (takes approximately 20 minutes)
-3. Run `python toolkit/governance.py --config config/nation.yaml --validate`
-4. All notebooks, templates, and modules auto-populate from your config
+2. Resolve placeholders and document Nation-selected policies (configuration entry time excludes governance review)
+3. Run `python -m toolkit.governance --config config/nation.yaml --validate`
+4. Notebooks load your config through the shared loader; regenerate and review outputs and complete standalone forms separately
 
 See the [adaptation guide notebook](Notebooks/06_adaptation_guide.ipynb) for a
 complete walkthrough, or begin with the [quickstart](docs/quickstart.md).
@@ -149,7 +148,8 @@ To execute the notebooks covered by continuous integration:
 ```bash
 pytest --nbmake Notebooks/00_orientation.ipynb Notebooks/01_frameworks.ipynb \
   Notebooks/02_data_provenance.ipynb Notebooks/03_sovereignty_audit.ipynb \
-  Notebooks/04_collection_design.ipynb Notebooks/06_adaptation_guide.ipynb
+  Notebooks/04_collection_design.ipynb Notebooks/05_seeds_workflow.ipynb \
+  Notebooks/06_adaptation_guide.ipynb
 ```
 
 **For Nation-specific consulting assistance** such as integrating existing Tribal
@@ -170,9 +170,7 @@ outside that context.
 | **FAIR** | Findable, Accessible, Interoperable, Reusable | https://www.go-fair.org/fair-principles/ |
 | **IEEE 2890-2025** | Provenance of Indigenous Peoples' Data | https://standards.ieee.org/ieee/2890/10318/ |
 
-FAIR governs technical data management. CARE and OCAP® govern the ethical
-obligations that FAIR alone does not address. IEEE 2890-2025 operationalizes
-both into machine-readable provenance records.
+FAIR addresses technical data management, including restricted access. CARE and, where applicable, OCAP® address governance concerns that FAIR alone does not cover. The toolkit provides its own provenance schema; IEEE conformance has not been established.
 
 ## Connected Repositories
 
@@ -200,4 +198,26 @@ See the [GNU Affero General Public License v3.0](LICENSE).
 
 The governance frameworks referenced by this toolkit (OCAP®, CARE, FAIR,
 IEEE 2890-2025) are governed by their respective organizations. This
-toolkit implements them but does not own or modify them.
+toolkit provides review prompts informed by them and does not claim certification.
+
+## Revised teaching workflow
+
+Each lesson produces a draft artifact and includes objectives, a decision exercise,
+an independent task, and a completion checklist. See [the teaching guide](docs/teaching_guide.md).
+The shared case is fictional, and lesson 05 uses synthetic observations offline by
+default. No approval, engagement, or return of findings is implied by execution.
+
+The audit withholds overall scores for incomplete assessments, records evidence
+per question, honors framework selection, and separates research/sharing approvals
+from indicative scores. It never certifies compliance or grants release permission.
+
+Access classification, approved storage, version control, and publication status
+are separate fields. Migrate the old GITIGNORED tier using the
+[adaptation guide](docs/adaptation_guide.md). A treaty is optional where inapplicable.
+
+Load order: explicit path, IDSOV_CONFIG, config/nation.yaml, fictional teaching example.
+The blank template intentionally fails validation until completed. Configuration
+entry time is separate from governance review and authorization.
+
+The existing whitepaper is a separately maintained document and may describe an
+earlier release. Current behavior is documented in these guides and tested code.

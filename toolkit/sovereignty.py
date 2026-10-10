@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 """
 toolkit/sovereignty.py
 Tribal Data Sovereignty Toolkit
@@ -20,12 +18,13 @@ Edit config/nation_template.yaml and save as config/nation.yaml
 No code changes required.
 """
 
-import sys
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
 
 # Nation configuration
+
 
 @dataclass
 class NationConfig:
@@ -33,36 +32,41 @@ class NationConfig:
     Holds all Nation-specific configuration loaded from nation.yaml.
     Fields map directly to config/nation_template.yaml.
     """
+
     # Identity
-    name:           str
-    collective:     str | None
-    territory:      str
-    census_name:    str
-    language:       str | None
-    demonym:        str | None
+    name: str
+    collective: str | None
+    territory: str
+    census_name: str
+    language: str | None
+    demonym: str | None
 
     # Provenance
-    treaty_name:        str
-    treaty_territory:   str
-    treaty_status:      str
-    legal_citations:    list[str]
-    subsurface_note:    str | None
+    treaty_name: str
+    treaty_territory: str
+    treaty_status: str
+    legal_citations: list[str]
+    subsurface_note: str | None
 
     # Stewardship
-    department:    str
-    contact_url:   str
-    contact_note:  str
+    department: str
+    contact_url: str
+    contact_note: str
 
     # Frameworks
     frameworks_enabled: dict[str, bool]
-    framework_refs:     dict[str, str]
+    framework_refs: dict[str, str]
 
     # Data classification
     classification_tiers: list[dict]
 
     # Attribution
-    citation_format:  str
-    acknowledgment:   str
+    citation_format: str
+    acknowledgment: str
+
+    teaching: bool = False
+    analysis: dict = field(default_factory=dict)
+    handling: dict = field(default_factory=dict)
 
     @classmethod
     def from_yaml(cls, path: str | Path) -> "NationConfig":
@@ -75,33 +79,36 @@ class NationConfig:
         with open(path, encoding="utf-8") as f:
             cfg = yaml.safe_load(f)
 
-        n  = cfg["nation"]
-        p  = cfg["provenance"]
-        s  = cfg["stewardship"]
+        n = cfg["nation"]
+        p = cfg["provenance"]
+        s = cfg["stewardship"]
         fw = cfg["frameworks"]
         at = cfg["attribution"]
         dc = cfg.get("data_classification", {})
 
         return cls(
-            name           = n["name"],
-            collective     = n.get("collective"),
-            territory      = n["territory"],
-            census_name    = n.get("census_name", n["name"]),
-            language       = n.get("language"),
-            demonym        = n.get("demonym"),
-            treaty_name        = p["treaty_name"],
-            treaty_territory   = p["treaty_territory"],
-            treaty_status      = p["treaty_status"].strip(),
-            legal_citations    = p.get("legal_citations", []),
-            subsurface_note    = p.get("subsurface_note", "").strip() or None,
-            department   = s["department"],
-            contact_url  = s.get("contact_url", ""),
-            contact_note = s.get("contact_note", "").strip(),
-            frameworks_enabled = {k: fw[k]["enabled"] for k in fw},
-            framework_refs     = {k: fw[k]["reference"] for k in fw},
-            classification_tiers = dc.get("tiers", []),
-            citation_format  = at.get("citation_format", "").strip(),
-            acknowledgment   = at.get("acknowledgment", "").strip(),
+            teaching=cfg.get("teaching", False),
+            analysis=cfg.get("analysis", {}),
+            handling=cfg.get("handling", {}),
+            name=n["name"],
+            collective=n.get("collective"),
+            territory=n["territory"],
+            census_name=n.get("census_name", n["name"]),
+            language=n.get("language"),
+            demonym=n.get("demonym"),
+            treaty_name=p.get("treaty_name", ""),
+            treaty_territory=p.get("treaty_territory", ""),
+            treaty_status=p["treaty_status"].strip(),
+            legal_citations=p.get("legal_citations", []),
+            subsurface_note=p.get("subsurface_note", "").strip() or None,
+            department=s["department"],
+            contact_url=s.get("contact_url", ""),
+            contact_note=s.get("contact_note", "").strip(),
+            frameworks_enabled={k: fw[k]["enabled"] for k in fw},
+            framework_refs={k: fw[k]["reference"] for k in fw},
+            classification_tiers=dc.get("tiers", []),
+            citation_format=at.get("citation_format", "").strip(),
+            acknowledgment=at.get("acknowledgment", "").strip(),
         )
 
     @property
@@ -115,8 +122,6 @@ class NationConfig:
             warnings.append("nation.name is required")
         if not self.territory:
             warnings.append("nation.territory is required")
-        if not self.treaty_name:
-            warnings.append("provenance.treaty_name is required")
         if not self.treaty_status:
             warnings.append("provenance.treaty_status is required")
         if not self.department:
@@ -125,10 +130,24 @@ class NationConfig:
             warnings.append("At least one governance framework must be enabled")
         if not self.classification_tiers:
             warnings.append("At least one data classification tier must be defined")
+        for label, value in (
+            ("nation.name", self.name),
+            ("nation.territory", self.territory),
+            ("provenance.treaty_status", self.treaty_status),
+            ("stewardship.department", self.department),
+        ):
+            if "[" in value or "]" in value:
+                warnings.append(f"{label} contains an unresolved placeholder")
+        ids = [tier.get("id") for tier in self.classification_tiers]
+        if len(ids) != len(set(ids)) or any(not tier for tier in ids):
+            warnings.append("Classification IDs must be nonempty and unique")
+        if "GITIGNORED" in ids:
+            warnings.append("Migrate GITIGNORED to an access tier plus handling rules")
         return warnings
 
 
 # Sovereignty context
+
 
 class SovereigntyContext:
     """
@@ -147,32 +166,30 @@ class SovereigntyContext:
     # Built-in source registry: extend with register_source()
     _BUILTIN_SOURCES: dict[str, dict] = {
         "usgs_nwis_streamflow": {
-            "name":     "USGS National Water Information System Streamflow",
-            "steward":  "US Geological Survey",
-            "license":  "Public domain",
-            "url":      "https://waterdata.usgs.gov/nwis/",
-            "note":     (
-                "USGS streamflow monitoring coverage on Tribal lands is "
-                "systematically sparse. Monitoring gaps are a federal "
-                "infrastructure equity finding, not a data error."
+            "name": "USGS National Water Information System Streamflow",
+            "steward": "US Geological Survey",
+            "license": "Public domain",
+            "url": "https://waterdata.usgs.gov/nwis/",
+            "note": (
+                "Verify query completeness, spatial coverage, and source "
+                "limitations before drawing conclusions."
             ),
         },
         "usgs_nwis_groundwater": {
-            "name":     "USGS National Water Information System Groundwater",
-            "steward":  "US Geological Survey",
-            "license":  "Public domain",
-            "url":      "https://waterdata.usgs.gov/nwis/",
-            "note":     (
-                "USGS groundwater monitoring well density on Tribal lands "
-                "is a fraction of that in adjacent agricultural counties. "
-                "This is a federal investment equity gap."
+            "name": "USGS National Water Information System Groundwater",
+            "steward": "US Geological Survey",
+            "license": "Public domain",
+            "url": "https://waterdata.usgs.gov/nwis/",
+            "note": (
+                "Verify query completeness, spatial coverage, and source "
+                "limitations before drawing conclusions."
             ),
         },
         "usgs_3d_model": {
-            "name":     "USGS 3D Geological Model of Western South Dakota",
-            "steward":  "US Geological Survey, Rocky Mountain Region",
-            "license":  "CC0 1.0 Universal (Public Domain)",
-            "url":      "https://doi.org/10.5066/P9LK4QHJ",
+            "name": "USGS 3D Geological Model of Western South Dakota",
+            "steward": "US Geological Survey, Rocky Mountain Region",
+            "license": "CC0 1.0 Universal (Public Domain)",
+            "url": "https://doi.org/10.5066/P9LK4QHJ",
             "citation": (
                 "Spangler, L.R., 2024, Digital data for a 3D Geological "
                 "Model of western South Dakota, USA: U.S. Geological Survey "
@@ -181,64 +198,62 @@ class SovereigntyContext:
             "note": None,
         },
         "usda_ssurgo": {
-            "name":     "USDA NRCS SSURGO Soil Survey Geographic Database",
-            "steward":  "USDA Natural Resources Conservation Service",
-            "license":  "Public domain",
-            "url":      "https://websoilsurvey.nrcs.usda.gov/",
-            "note":     (
-                "SSURGO sampling density on Tribal lands is frequently lower "
-                "than adjacent non-Tribal agricultural lands. This is a "
-                "federal investment gap, not evidence of uniform soil conditions."
+            "name": "USDA NRCS SSURGO Soil Survey Geographic Database",
+            "steward": "USDA Natural Resources Conservation Service",
+            "license": "Public domain",
+            "url": "https://websoilsurvey.nrcs.usda.gov/",
+            "note": (
+                "Verify query completeness, spatial coverage, and source "
+                "limitations before drawing conclusions."
             ),
         },
         "census_aiannh": {
-            "name":     "US Census Bureau TIGER/Line AIANNH Boundaries",
-            "steward":  "US Census Bureau",
-            "license":  "Public domain",
-            "url":      "https://www.census.gov/geographies/mapping-files/",
-            "note":     (
+            "name": "US Census Bureau TIGER/Line AIANNH Boundaries",
+            "steward": "US Census Bureau",
+            "license": "Public domain",
+            "url": "https://www.census.gov/geographies/mapping-files/",
+            "note": (
                 "Census boundaries are for statistical purposes only. "
                 "They do not represent legal jurisdiction or Tribal "
                 "self-definition."
             ),
         },
         "noaa_pdsi": {
-            "name":     "NOAA Climate Division PDSI",
-            "steward":  "National Oceanic and Atmospheric Administration",
-            "license":  "Public domain",
-            "url":      "https://www.ncei.noaa.gov/pub/data/cirs/climdiv/",
-            "note":     (
-                "NOAA PDSI is computed from weather station observations. "
-                "Station density on Tribal lands is lower than surrounding "
-                "areas, affecting index accuracy for specific communities."
+            "name": "NOAA Climate Division PDSI",
+            "steward": "National Oceanic and Atmospheric Administration",
+            "license": "Public domain",
+            "url": "https://www.ncei.noaa.gov/pub/data/cirs/climdiv/",
+            "note": (
+                "Verify query completeness, spatial coverage, and source "
+                "limitations before drawing conclusions."
             ),
         },
         "daymet": {
-            "name":     "Daymet Daily Surface Weather Data",
-            "steward":  "NASA/Oak Ridge National Laboratory",
-            "license":  "Public domain",
-            "url":      "https://daymet.ornl.gov/",
-            "note":     (
+            "name": "Daymet Daily Surface Weather Data",
+            "steward": "NASA/Oak Ridge National Laboratory",
+            "license": "Public domain",
+            "url": "https://daymet.ornl.gov/",
+            "note": (
                 "Daymet is a modeled dataset interpolated from ground "
                 "station observations. Accuracy is limited in areas with "
                 "sparse ground station coverage, including many Tribal lands."
             ),
         },
         "usgs_mrds": {
-            "name":     "USGS Mineral Resources Data System (MRDS)",
-            "steward":  "US Geological Survey",
-            "license":  "Public domain",
-            "url":      "https://mrdata.usgs.gov/mrds/",
-            "note":     None,
+            "name": "USGS Mineral Resources Data System (MRDS)",
+            "steward": "US Geological Survey",
+            "license": "Public domain",
+            "url": "https://mrdata.usgs.gov/mrds/",
+            "note": None,
         },
         "tribal_field_data": {
-            "name":     "Tribal-Collected Field Data",
-            "steward":  "Tribal Nation: governed by OCAP®",
-            "license":  "Tribal: not for public release without authorization",
-            "url":      "data/raw/ (local only: gitignored)",
-            "note":     (
+            "name": "Tribal-Collected Field Data",
+            "steward": "Nation-designated steward",
+            "license": "Tribal: not for public release without authorization",
+            "url": "data/raw/ (local only: gitignored)",
+            "note": (
                 "This data is collected by or in partnership with Tribal "
-                "natural resource staff. Under OCAP® principles, the "
+                "natural resource staff. Under Nation-selected policy, the "
                 "collecting Nation retains Ownership, Control, Access, and "
                 "Possession. Never commit to version control or share without "
                 "explicit Tribal authorization."
@@ -247,7 +262,7 @@ class SovereigntyContext:
     }
 
     def __init__(self, config: NationConfig):
-        self.config   = config
+        self.config = config
         self._sources = dict(self._BUILTIN_SOURCES)
 
     @classmethod
@@ -256,9 +271,7 @@ class SovereigntyContext:
         config = NationConfig.from_yaml(path)
         errors = config.validate()
         if errors:
-            print("Configuration warnings:")
-            for e in errors:
-                print(f"  ! {e}")
+            raise ValueError("Invalid Nation configuration: " + "; ".join(errors))
         return cls(config)
 
     @classmethod
@@ -275,36 +288,48 @@ class SovereigntyContext:
         })
         """
         config = NationConfig(
-            name            = cfg.get("name", "Tribal Nation"),
-            collective      = cfg.get("collective"),
-            territory       = cfg.get("territory", "Tribal Territory"),
-            census_name     = cfg.get("census_name", cfg.get("name", "")),
-            language        = cfg.get("language"),
-            demonym         = cfg.get("demonym"),
-            treaty_name     = cfg.get("treaty_name", ""),
-            treaty_territory= cfg.get("treaty_territory", ""),
-            treaty_status   = cfg.get("treaty_status",
+            teaching=cfg.get("teaching", False),
+            analysis=cfg.get("analysis", {}),
+            handling=cfg.get("handling", {}),
+            name=cfg.get("name", "Tribal Nation"),
+            collective=cfg.get("collective"),
+            territory=cfg.get("territory", "Tribal Territory"),
+            census_name=cfg.get("census_name", cfg.get("name", "")),
+            language=cfg.get("language"),
+            demonym=cfg.get("demonym"),
+            treaty_name=cfg.get("treaty_name", ""),
+            treaty_territory=cfg.get("treaty_territory", ""),
+            treaty_status=cfg.get(
+                "treaty_status",
                 "This data describes the sovereign territory and resources "
-                "of an Indigenous Nation. All use is subject to OCAP® principles."),
-            legal_citations    = cfg.get("legal_citations", []),
-            subsurface_note    = cfg.get("subsurface_note"),
-            department   = cfg.get("department", "Natural Resources Department"),
-            contact_url  = cfg.get("contact_url", ""),
-            contact_note = cfg.get("contact_note", ""),
-            frameworks_enabled = cfg.get("frameworks_enabled", {
-                "ocap": True, "care": True, "fair": True, "ieee_2890": True,
-                "local_contexts": False,
-            }),
-            framework_refs = {
-                "ocap":           "https://fnigc.ca/ocap-training/",
-                "care":           "https://www.gida-global.org/care",
-                "fair":           "https://www.go-fair.org/fair-principles/",
-                "ieee_2890":      "https://standards.ieee.org/ieee/2890/10318/",
+                "of an Indigenous Nation. All use is subject to the "
+                "Nation-selected governance policies.",
+            ),
+            legal_citations=cfg.get("legal_citations", []),
+            subsurface_note=cfg.get("subsurface_note"),
+            department=cfg.get("department", "Natural Resources Department"),
+            contact_url=cfg.get("contact_url", ""),
+            contact_note=cfg.get("contact_note", ""),
+            frameworks_enabled=cfg.get(
+                "frameworks_enabled",
+                {
+                    "ocap": False,
+                    "care": True,
+                    "fair": True,
+                    "ieee_2890": True,
+                    "local_contexts": False,
+                },
+            ),
+            framework_refs={
+                "ocap": "https://fnigc.ca/ocap-training/",
+                "care": "https://www.gida-global.org/care",
+                "fair": "https://www.go-fair.org/fair-principles/",
+                "ieee_2890": "https://standards.ieee.org/ieee/2890/10318/",
                 "local_contexts": "https://localcontexts.org/",
             },
-            classification_tiers = cfg.get("classification_tiers", []),
-            citation_format  = cfg.get("citation_format", ""),
-            acknowledgment   = cfg.get("acknowledgment", ""),
+            classification_tiers=cfg.get("classification_tiers", []),
+            citation_format=cfg.get("citation_format", ""),
+            acknowledgment=cfg.get("acknowledgment", ""),
         )
         return cls(config)
 
@@ -336,7 +361,9 @@ class SovereigntyContext:
         Call at the top of every notebook.
         """
         cfg = self.config
-        print("TRIBAL DATA SOVEREIGNTY ACKNOWLEDGMENT")
+        print("DRAFT TRIBAL DATA SOVEREIGNTY ACKNOWLEDGMENT")
+        if cfg.teaching:
+            print("TEACHING EXAMPLE: no relationship or authorization is asserted.")
         print()
         print(f"  Nation    : {cfg.name}")
         if cfg.collective:
@@ -356,16 +383,22 @@ class SovereigntyContext:
         # Governance frameworks
         print("  GOVERNANCE FRAMEWORKS")
         fw_labels = {
-            "ocap":           ("OCAP®",        "Ownership, Control, Access, Possession"),
-            "care":           ("CARE",          "Collective Benefit, Authority, Responsibility, Ethics"),
-            "fair":           ("FAIR",          "Findable, Accessible, Interoperable, Reusable"),
-            "ieee_2890":      ("IEEE 2890-2025","Recommended Practice for Provenance of Indigenous Data"),
-            "local_contexts": ("Local Contexts","Traditional Knowledge Labels and Notices"),
+            "ocap": ("OCAP®", "Ownership, Control, Access, Possession"),
+            "care": ("CARE", "Collective Benefit, Authority, Responsibility, Ethics"),
+            "fair": ("FAIR", "Findable, Accessible, Interoperable, Reusable"),
+            "ieee_2890": (
+                "IEEE 2890-2025",
+                "Recommended Practice for Provenance of Indigenous Data",
+            ),
+            "local_contexts": (
+                "Local Contexts",
+                "Traditional Knowledge Labels and Notices",
+            ),
         }
         for fw_key, enabled in cfg.frameworks_enabled.items():
             if enabled:
                 label, desc = fw_labels.get(fw_key, (fw_key.upper(), ""))
-                ref         = cfg.framework_refs.get(fw_key, "")
+                ref = cfg.framework_refs.get(fw_key, "")
                 print(f"  {label:<18}: {desc}")
                 print(f"  {'':<18}  {ref}")
                 print()
@@ -386,8 +419,10 @@ class SovereigntyContext:
 
     def generate_citations(self, source_keys: list[str]) -> str:
         """Return a plain-text citation block."""
-        cfg   = self.config
-        lines = ["DATA CITATIONS", ]
+        cfg = self.config
+        lines = [
+            "DATA CITATIONS",
+        ]
 
         for key in source_keys:
             src = self._sources.get(key)
@@ -409,8 +444,7 @@ class SovereigntyContext:
                 lines.append(f"  {cite}")
 
         fw_str = " | ".join(
-            k.upper().replace("_", " ")
-            for k, v in cfg.frameworks_enabled.items() if v
+            k.upper().replace("_", " ") for k, v in cfg.frameworks_enabled.items() if v
         )
         lines.append(f"\nGOVERNANCE: {fw_str}")
         return "\n".join(lines)
@@ -425,7 +459,7 @@ class SovereigntyContext:
         additional: dict | None = None,
     ):
         """
-        Attach IEEE 2890-2025 provenance attributes to a GeoDataFrame.
+        Attach toolkit provenance attributes to a GeoDataFrame.
 
         Parameters
         gdf            : GeoDataFrame to annotate
@@ -437,27 +471,39 @@ class SovereigntyContext:
         Annotated GeoDataFrame (copy)
         """
         if not classification:
-            raise ValueError("An explicit classification is required before attaching provenance.")
+            raise ValueError(
+                "An explicit classification is required before attaching provenance."
+            )
         valid_tiers = {tier.get("id") for tier in self.config.classification_tiers}
         if classification not in valid_tiers:
-            raise ValueError(f"Unknown classification {classification!r}. Valid tiers: {sorted(valid_tiers)}")
+            raise ValueError(
+                (
+                    f"Unknown classification {classification!r}. Valid tiers: "
+                    f"{sorted(valid_tiers)}"
+                )
+            )
         cfg = self.config
         src = self._sources.get(source_key, {})
         out = gdf.copy()
 
-        # IEEE 2890-2025 required provenance fields
-        out["prov_nation"]          = cfg.name
-        out["prov_territory"]       = cfg.territory
-        out["prov_treaty"]          = cfg.treaty_name
-        out["prov_data_source"]     = src.get("name", source_key)
-        out["prov_steward"]         = src.get("steward", "")
-        out["prov_license"]         = src.get("license", "")
-        out["prov_url"]             = src.get("url", "")
-        out["prov_classification"]  = classification
-        out["prov_frameworks"]      = " | ".join(
+        # Toolkit-defined provenance fields; see docs/frameworks_reference.md
+        out["prov_nation"] = cfg.name
+        out["prov_territory"] = cfg.territory
+        out["prov_treaty"] = cfg.treaty_name
+        out["prov_data_source"] = src.get("name", source_key)
+        out["prov_steward"] = src.get("steward", "")
+        out["prov_license"] = src.get("license", "")
+        out["prov_url"] = src.get("url", "")
+        out["prov_classification"] = classification
+        out["prov_approved_storage"] = cfg.handling.get(
+            "approved_storage", "UNSPECIFIED"
+        )
+        out["prov_version_control"] = cfg.handling.get("version_control", "pending")
+        out["prov_publication_status"] = "pending"
+        out["prov_frameworks"] = " | ".join(
             k.upper() for k, v in cfg.frameworks_enabled.items() if v
         )
-        out["prov_dept"]            = cfg.department
+        out["prov_dept"] = cfg.department
 
         if additional:
             for k, v in additional.items():
@@ -481,17 +527,33 @@ class SovereigntyContext:
         or data package.
         """
         if not classification:
-            raise ValueError("An explicit classification is required before generating a governance report.")
+            raise ValueError(
+                (
+                    "An explicit classification is required before generating a "
+                    "governance report."
+                )
+            )
+        if classification not in {
+            tier["id"] for tier in self.config.classification_tiers
+        }:
+            raise ValueError(f"Unknown classification: {classification}")
         import datetime
-        cfg  = self.config
+
+        cfg = self.config
         date = datetime.date.today().isoformat()
 
         lines = [
-            f"DATA GOVERNANCE REPORT",
+            "DRAFT DATA GOVERNANCE REPORT",
+            "Teaching example"
+            if cfg.teaching
+            else "Authorization must be evidenced separately",
             f"Dataset       : {dataset_name}",
             f"Nation        : {cfg.name}",
             f"Territory     : {cfg.territory}",
             f"Classification: {classification}",
+            f"Approved storage: {cfg.handling.get('approved_storage', 'UNSPECIFIED')}",
+            f"Version control: {cfg.handling.get('version_control', 'pending')}",
+            "Publication status: pending; approvals require separate evidence",
             f"Report date   : {date}",
         ]
         if analyst_name:
@@ -549,12 +611,13 @@ class SovereigntyContext:
         and prompts analyst to select appropriate tier for a dataset.
         Returns the selected tier ID.
         """
-        cfg   = self.config
+        cfg = self.config
         tiers = cfg.classification_tiers
 
         if not tiers:
-            print("No classification tiers defined in config. Using PUBLIC.")
-            return "PUBLIC"
+            raise ValueError(
+                "No classification tiers defined; configure access rules first"
+            )
 
         print(f"DATA CLASSIFICATION — {cfg.name}")
         print(f"Dataset: {dataset_description}")
@@ -582,15 +645,21 @@ class SovereigntyContext:
 
 if __name__ == "__main__":
     import argparse
+
     parser = argparse.ArgumentParser(
         description="Tribal Data Sovereignty Toolkit sovereignty.py"
     )
-    parser.add_argument("--config", default="config/nation.yaml",
-                        help="Path to nation YAML config file")
-    parser.add_argument("--validate", action="store_true",
-                        help="Validate config and print acknowledgment")
-    parser.add_argument("--report", metavar="DATASET",
-                        help="Generate a governance report for a dataset")
+    parser.add_argument(
+        "--config", default="config/nation.yaml", help="Path to nation YAML config file"
+    )
+    parser.add_argument(
+        "--validate",
+        action="store_true",
+        help="Validate config and print acknowledgment",
+    )
+    parser.add_argument(
+        "--report", metavar="DATASET", help="Generate a governance report for a dataset"
+    )
     args = parser.parse_args()
 
     ctx = SovereigntyContext.from_config(args.config)

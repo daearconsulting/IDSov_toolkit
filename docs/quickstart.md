@@ -1,135 +1,36 @@
-# Quickstart Guide
-## Tribal Data Sovereignty Toolkit
+# Quick start
 
-## Choose your path
+## Without Python
 
-### I don't write code, I just need governance documents
+Complete the forms in this order: project brief, framework applicability,
+collection protocol, evidence and approvals, stewardship handoff. Spreadsheet
+forms provide optional catalog and provenance entry. All begin as drafts.
 
-No installation required. Go straight to `Forms/`:
+## Python and notebooks
 
-| Template | Use it for |
-|---|---|
-| `data_sovereignty_statement.md` | Any report, publication, or data package |
-| `community_consent_framework.md` | Starting a new data collection program |
-| `ieee_2890_compliance_checklist.xlsx` | Auditing an existing dataset before publication |
-| `tribal_data_catalog.xlsx` | Maintaining an inventory of your Nation's data assets |
-| `provenance_record.xlsx` | Documenting a single dataset's governance history |
+From the repository root:
 
-Fill in the bracketed fields. That's it.
-
-### I'm a researcher working with Tribal data
-
-**- Read notebook 01 (Frameworks).** Understand what OCAP®, CARE,
-FAIR, and IEEE 2890-2025 require of you before you touch any data.
-
-**- Fill out `Forms/community_consent_framework.md`** before
-data collection begins. Get it reviewed by the Tribal department.
-
-**- Set up the toolkit in Python:**
-
-```bash
-git clone https://github.com/daearconsulting/IDSov_toolkit.git
-cd IDSov_toolkit
-
+```sh
 conda env create -f environment.yml
 conda activate tribal-data-sovereignty
-
-cp config/nation_template.yaml config/nation.yaml
-# Edit nation.yaml (takes about 20 minutes)
+pip install -e ".[dev]"
+jupyter lab
 ```
 
-**- Add sovereignty to your notebooks:**
+Open `Notebooks/00_orientation.ipynb`. All seven lessons run offline using a
+fictional Nation and synthetic data. Work through the exercises and review the
+draft artifacts under `outputs/teaching/`. Automatic execution does not establish
+approval, complete an exercise, or return findings to a community.
 
-```python
-from toolkit.sovereignty import SovereigntyContext
+For a working project, follow `docs/adaptation_guide.md`. `nation.yaml` takes
+precedence over the teaching example. Configuration errors are explicit.
 
-ctx = SovereigntyContext.from_config("config/nation.yaml")
-ctx.print_acknowledgment()   # call at the top of every notebook
+```sh
+python -m toolkit.governance --config config/nation.yaml --validate
+pytest
+pytest --nbmake Notebooks --nbmake-timeout=180
+ruff check toolkit tests
 ```
 
-**- Attach provenance to every output:**
-
-```python
-# After loading a GeoDataFrame from a federal source
-gdf = ctx.attach_provenance(gdf, source_key="usgs_nwis_streamflow", classification="PUBLIC")
-
-# Before sharing any output
-print(ctx.generate_citations(["usgs_nwis_streamflow", "usda_ssurgo"]))
-```
-
-**- Audit before publication:**
-
-```python
-from toolkit.audit import SovereigntyAudit
-audit = SovereigntyAudit("My Dataset Name")
-# respond to questions, then:
-print(audit.report())
-```
-
-### I'm teaching a course or running a hackathon
-
-Work through the notebooks in order:
-
-```
-00_orientation.ipynb         - 15 min  what is this and who is it for
-01_frameworks.ipynb          - 45 min  OCAP®, CARE, FAIR, IEEE 2890-2025
-02_data_provenance.ipynb     - 60 min  building and attaching provenance records
-03_sovereignty_audit.ipynb   - 60 min  auditing a dataset
-04_collection_design.ipynb   - 45 min  sovereignty-first field data design
-05_seeds_workflow.ipynb      - 90 min full SEEDS cycle with live climate data
-06_adaptation_guide.ipynb    - 30 min  adapting for a new Nation
-```
-
-Notebook 05 (SEEDS Workflow) is the standalone teaching notebook 
-it runs a complete Earth data science analysis of Pine Ridge drought
-data while weaving sovereignty checks into every step. It is suitable
-for hackathons and workshops without requiring the other notebooks first.
-
-## Validating your config
-
-After editing `config/nation.yaml`:
-
-```bash
-python toolkit/governance.py --config config/nation.yaml --validate
-```
-
-If validation passes, generate a sovereignty statement:
-
-```bash
-python toolkit/governance.py --config config/nation.yaml --statement
-```
-
-Or a compliance checklist:
-
-```bash
-python toolkit/governance.py --config config/nation.yaml --checklist
-```
-
-## The three-line minimum
-
-If you do nothing else, at least do this in every notebook that touches
-Indigenous data:
-
-```python
-from toolkit.sovereignty import SovereigntyContext
-ctx = SovereigntyContext.from_config("config/nation.yaml")
-ctx.print_acknowledgment()
-```
-
-This tells everyone who opens the notebook whose land the data describes, 
-what treaty governs that land, and what frameworks
-apply. That is the minimum floor of responsible practice.
-
-## Getting help
-
-**Technical questions:** Open an issue on GitHub.
-
-**Nation-specific configuration assistance:** Contact Daear Consulting, LLC.
-Nation-specific work such as integrating Tribal data codes, Local Contexts TK
-Labels, custom governance schemas is a consulting engagement.
-
-**Framework questions:**
-- OCAP®: https://fnigc.ca/ocap-training/
-- CARE: https://www.gida-global.org/care
-- FAIR: https://www.go-fair.org/fair-principles/
-- IEEE 2890-2025: https://standards.ieee.org/ieee/2890/10318/
+Never commit actual restricted data or evidence. `.gitignore` does not protect
+already tracked files or enforce storage access. Use Nation-approved systems.

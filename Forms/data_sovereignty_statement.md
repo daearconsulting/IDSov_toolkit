@@ -1,91 +1,41 @@
-# Data Sovereignty Statement
-<!-- Fill in all [bracketed] fields before use -->
+# Draft data sovereignty statement
 
-**Nation:** [Nation Name]  
-**Territory:** [Territory Name]  
-**Treaty:** [Treaty Name and Date]  
-**Date:** [Date]  
-**Project:** [Project Name]
+**Nation/territory:** [Complete]
+**Project/dataset:** [Complete]
+**Reviewer/date/evidence:** [Complete]
+**Status:** pending review
 
-## Territorial Acknowledgment
+## Applicable authority
 
-This [analysis / dataset / report] describes the lands, waters, and
-communities of the [Nation Name] people of [Territory Name]. The
-[Nation Name] people have stewarded these lands since time immemorial
-and retain sovereign authority over their territory and the data that
-describes it.
+[Insert Nation-reviewed statement of authority and policy. Include a treaty only
+where applicable. Do not infer approval or a relationship from a place name.]
 
-**Treaty basis:** [Treaty Name] ([Year]) [Brief description of
-territorial provisions]
+## Framework selection
 
-**Legal citation (if applicable):** [Court case or statute]
+[List only frameworks selected by the Nation, with rationale and decision evidence.]
+OCAP® is a registered trademark of the First Nations Information Governance
+Centre (FNIGC) and is specifically First Nations guidance:
+https://fnigc.ca/ocap-training/. Do not presume applicability.
+Restricted data can be FAIR through authenticated and authorized access.
+Toolkit provenance uses a custom schema; IEEE conformance is not established.
 
-## Data Governance
+## Stewardship and handling
 
-This work is governed by the following Indigenous data sovereignty
-frameworks:
+| Dataset | Access tier | Approved storage | Version-control permission | Publication status |
+|---|---|---|---|---|
+| [Dataset] | [Nation tier] | [Location] | [Decision] | pending |
 
-**OCAP®** (Ownership, Control, Access, Possession)  
-The [Nation Name] retain the right to own, control, access, and possess
-all data collected about their lands and communities.  
-Reference: https://fnigc.ca/ocap-training/
+**Designated steward / contact:** [Complete]
 
-**CARE Principles** (Collective Benefit, Authority to Control,
-Responsibility, Ethics)  
-All data use must deliver collective benefit to the [Nation Name] people,
-respect their authority to control data about themselves, and uphold
-ethical obligations across the full data lifecycle.  
-Reference: https://www.gida-global.org/care
+**Research authorization:** pending; [evidence / reviewer / date]
 
-**FAIR Principles** (Findable, Accessible, Interoperable, Reusable)  
-Technical data management standards. FAIR governs how data is managed;
-CARE and OCAP® govern the ethical obligations that FAIR alone does not
-address.  
-Reference: https://www.go-fair.org/fair-principles/
+**Sharing authorization:** pending; [evidence / reviewer / date]
 
-**IEEE 2890-2025** (Recommended Practice for Provenance of Indigenous
-Peoples' Data)  
-Provenance records for this dataset document both technical lineage and
-governance lineage in accordance with the first international standard
-for Indigenous data provenance.  
-Reference: https://standards.ieee.org/ieee/2890/10318/
+**Return of findings:** planned; [recipient / due date / receipt evidence]
 
-## Data Stewardship
+**Retention and revocation:** [Complete]
 
-**Primary steward:** [Tribal Department Name]  
-**Contact:** [Department contact or website]
+## Attribution
 
-All data and findings produced in this project have been or will be
-returned to [Tribal Department Name] before external publication or
-sharing. Publication is subject to Tribal review and approval.
-
-## Data Classification
-
-Data produced in this project is classified as follows:
-
-- **[Dataset 1]:** [PUBLIC / COMMUNITY / RESTRICTED / GITIGNORED]
-- **[Dataset 2]:** [PUBLIC / COMMUNITY / RESTRICTED / GITIGNORED]
-- **[Tribal-collected field data]:** GITIGNORED — stored locally under
-  Tribal control, never committed to version control
-
-## Acknowledgment
-
-[Use the acknowledgment text from your nation.yaml config, or write
-a custom acknowledgment for this specific project. Example:]
-
-The authors acknowledge that this research describes the lands, waters,
-and communities of the [Nation Name] people of [Territory Name]. We are
-grateful for the opportunity to work in relationship with the [Nation Name]
-Nation and commit to returning findings to the community and supporting
-Tribal data sovereignty.
-
-## Citation
-
-When citing data or findings from this project, please include:
-
-> [Full citation including Nation territory acknowledgment from
-> nation.yaml config]
-
-
-*This statement was generated using the Tribal Data Sovereignty Toolkit.*  
-*Daear Consulting, LLC*
+[Insert Nation-reviewed acknowledgment and citation. Do not assert a partnership,
+consent, or return of findings without evidence.]

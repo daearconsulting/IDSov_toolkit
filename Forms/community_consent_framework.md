@@ -13,7 +13,7 @@
 
 This framework describes how the [Nation Name] community's informed
 consent is obtained, maintained, and can be withdrawn for [Project Name].
-It implements OCAP® and CARE principles in the consent process.
+Select the applicable Nation policies and frameworks in Forms/framework_applicability.md. This draft does not establish consent.
 
 ## Scope
 
@@ -31,7 +31,7 @@ Data about Tribal lands and communities requires community-level consent
 through appropriate Tribal governance structures, not just individual
 informed consent from research participants.
 
-Community consent is granted by: [Tribal Council / Natural Resources
+Designated body to review community consent: [Tribal Council / Natural Resources
 Department / Data Governance Committee / specify the appropriate body]
 
 ## What We Are Consenting To
@@ -84,7 +84,7 @@ Data produced in this project may be shared as follows:
 | [Dataset 1] | PUBLIC | General public, academic community |
 | [Dataset 2] | COMMUNITY | Tribal members and authorized partners |
 | [Dataset 3] | RESTRICTED | Tribal governance only |
-| [Field data] | GITIGNORED | Never uploaded or shared |
+| [Field data] | [Nation-selected access tier] | [Authorized recipients only] |
 
 Any sharing beyond what is listed above requires additional consent.
 
@@ -122,9 +122,9 @@ community through this research:
 
 ## Approval
 
-This framework has been reviewed and approved by:
+Approval is pending until evidence, reviewer, and date are recorded:
 
-| Role | Name | Date | Signature |
+| Role | Name | Date | Signature / evidence reference |
 |---|---|---|---|
 | [Tribal Council Chair / Designee] | | | |
 | [Department Head] | | | |
@@ -133,3 +133,13 @@ This framework has been reviewed and approved by:
 *This framework was created using the Tribal Data Sovereignty Toolkit.*  
 *It is a starting point that you can adapt for your Nation's governance structures.*  
 *Daear Consulting, LLC*
+
+## Storage and release decisions
+
+Approved storage: [Complete]
+
+Version-control permission: [Complete]
+
+Publication status: pending
+
+Retention, deletion, and access revocation process: [Complete]

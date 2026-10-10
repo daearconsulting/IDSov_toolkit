@@ -1,35 +1,24 @@
+"""Toolkit-defined provenance records.
+
+These fields support documenting governance and technical lineage. They are
+not a certified IEEE or W3C serialization. See docs/frameworks_reference.md.
+"""
+
 from __future__ import annotations
 
-"""
-toolkit/provenance.py
-Tribal Data Sovereignty Toolkit
-
-IEEE 2890-2025 provenance record generation.
-Implements the Recommended Practice for Provenance of Indigenous Peoples' Data.
-
-IEEE 2890-2025 establishes that provenance records for Indigenous data must
-document not only technical lineage (who created the data, how, when) but
-also governance lineage (whose land it describes, under what authority it was
-collected, and what obligations attach to its use).
-
-This module operationalizes that standard into Python-native data structures
-that can be attached to any dataset, exported as JSON or CSV, and included
-in data packages and publications.
-"""
-
-import json
 import datetime
-from dataclasses import dataclass, field, asdict
+import json
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
-
 # Provenance record
+
 
 @dataclass
 class ProvenanceRecord:
     """
-    A single IEEE 2890-2025 compliant provenance record.
+    A single toolkit-defined provenance record.
 
     This record captures both technical provenance (the standard W3C PROV
     elements: entity, agent, activity) and Indigenous data governance
@@ -55,43 +44,69 @@ class ProvenanceRecord:
     processing_steps : List of processing steps applied to the data
     notes            : Any additional governance or provenance notes
     """
-    record_id:          str
-    dataset_name:       str
-    created_date:       str = field(
-        default_factory=lambda: datetime.date.today().isoformat()
-    )
+
+    record_id: str
+    dataset_name: str
+    created_date: str = field(default_factory=lambda: datetime.date.today().isoformat())
 
     # Indigenous data governance provenance (IEEE 2890-2025 core)
-    nation_name:        str = ""
-    territory_name:     str = ""
-    treaty_reference:   str = ""
-    treaty_status:      str = ""
-    legal_citation:     str = ""
+    nation_name: str = ""
+    territory_name: str = ""
+    treaty_reference: str = ""
+    treaty_status: str = ""
+    legal_citation: str = ""
 
-    # Technical provenance (W3C PROV-compatible)
-    data_source_name:   str = ""
-    data_source_url:    str = ""
-    data_steward:       str = ""
-    license:            str = ""
-    collection_method:  str = ""
-    collection_date:    str = ""
+    # Technical lineage (toolkit fields, not a W3C serialization)
+    data_source_name: str = ""
+    data_source_url: str = ""
+    data_steward: str = ""
+    license: str = ""
+    collection_method: str = ""
+    collection_date: str = ""
 
-    # Governancea 
-    classification:     str = "UNCLASSIFIED"
-    frameworks:         str = ""
-    stewardship_dept:   str = ""
+    # Governance
+    classification: str = "UNCLASSIFIED"
+    approved_storage: str = "UNSPECIFIED"
+    version_control: str = "prohibited unless explicitly authorized"
+    publication_status: str = "pending"
+    approval_evidence: str = ""
+    approval_reviewer: str = ""
+    approval_date: str = ""
+    teaching: bool = False
+    frameworks: str = ""
+    stewardship_dept: str = ""
 
     # Analyst
-    analyst_name:       str = ""
-    analyst_org:        str = ""
-    analysis_purpose:   str = ""
+    analyst_name: str = ""
+    analyst_org: str = ""
+    analysis_purpose: str = ""
 
     # Lineage
-    processing_steps:   list[str] = field(default_factory=list)
-    derived_from:       list[str] = field(default_factory=list)
-    notes:              str = ""
+    processing_steps: list[str] = field(default_factory=list)
+    derived_from: list[str] = field(default_factory=list)
+    notes: str = ""
+
+    def __post_init__(self):
+        if not self.classification or self.classification in {
+            "UNCLASSIFIED",
+            "GITIGNORED",
+        }:
+            raise ValueError("An explicit classification access tier is required")
+        if self.publication_status not in {"pending", "approved", "denied", "revoked"}:
+            raise ValueError("Invalid publication status")
+        if self.teaching and self.publication_status == "approved":
+            raise ValueError("Teaching records cannot assert real publication approval")
+        if self.publication_status == "approved":
+            if not all(
+                (self.approval_evidence, self.approval_reviewer, self.approval_date)
+            ):
+                raise ValueError(
+                    "Publication approval requires evidence, reviewer, and date"
+                )
+            datetime.date.fromisoformat(self.approval_date)
 
     def to_dict(self) -> dict:
+        self.__post_init__()
         return asdict(self)
 
     def to_json(self, indent: int = 2) -> str:
@@ -99,37 +114,45 @@ class ProvenanceRecord:
 
     def to_markdown(self) -> str:
         """Return a formatted markdown provenance statement."""
+        self.__post_init__()
         lines = [
             f"## Data Provenance {self.dataset_name}",
-            f"",
+            "",
             f"**Record ID:** `{self.record_id}`  ",
             f"**Created:** {self.created_date}  ",
-            f"",
-            f"### Territorial Provenance",
-            f"",
-            f"| Field | Value |",
-            f"|---|---|",
+            "",
+            "### Territorial Provenance",
+            "",
+            "| Field | Value |",
+            "|---|---|",
             f"| Nation | {self.nation_name} |",
             f"| Territory | {self.territory_name} |",
             f"| Treaty | {self.treaty_reference} |",
         ]
         if self.treaty_status:
-            lines += [f"", f"**Status:** {self.treaty_status}", f""]
+            lines += ["", f"**Status:** {self.treaty_status}", ""]
         if self.legal_citation:
-            lines += [f"**Legal citation:** {self.legal_citation}", f""]
+            lines += [f"**Legal citation:** {self.legal_citation}", ""]
 
         lines += [
-            f"### Data Source",
-            f"",
-            f"| Field | Value |",
-            f"|---|---|",
+            "### Data Source",
+            "",
+            "| Field | Value |",
+            "|---|---|",
             f"| Source | {self.data_source_name} |",
             f"| URL | {self.data_source_url} |",
             f"| Steward | {self.data_steward} |",
             f"| License | {self.license} |",
             f"| Classification | {self.classification} |",
+            f"| Approved storage | {self.approved_storage} |",
+            f"| Version control | {self.version_control} |",
+            f"| Publication status | {self.publication_status} |",
+            f"| Approval evidence | {self.approval_evidence or 'Not recorded'} |",
+            f"| Approval reviewer | {self.approval_reviewer or 'Not recorded'} |",
+            f"| Approval date | {self.approval_date or 'Not recorded'} |",
+            f"| Teaching scenario | {self.teaching} |",
             f"| Frameworks | {self.frameworks} |",
-            f"",
+            "",
         ]
 
         if self.processing_steps:
@@ -139,12 +162,12 @@ class ProvenanceRecord:
             lines.append("")
 
         if self.notes:
-            lines += [f"### Notes", f"", f"{self.notes}", f""]
+            lines += ["### Notes", "", f"{self.notes}", ""]
 
         lines += [
-            f"---",
-            f"*Generated by the Tribal Data Sovereignty Toolkit "
-            f"IEEE 2890-2025 compliant*",
+            "---",
+            "*Generated by the Tribal Data Sovereignty Toolkit "
+            "Toolkit schema; IEEE conformance not established*",
         ]
         return "\n".join(lines)
 
@@ -161,6 +184,7 @@ class ProvenanceRecord:
 
 
 # Provenance builder
+
 
 class ProvenanceBuilder:
     """
@@ -187,18 +211,26 @@ class ProvenanceBuilder:
     def for_nation(self, ctx) -> "ProvenanceBuilder":
         """Populate Nation fields from a SovereigntyContext."""
         cfg = ctx.config
-        self._data.update({
-            "nation_name":      cfg.name,
-            "territory_name":   cfg.territory,
-            "treaty_reference": cfg.treaty_name,
-            "treaty_status":    cfg.treaty_status,
-            "legal_citation":   (cfg.legal_citations[0]
-                                  if cfg.legal_citations else ""),
-            "stewardship_dept": cfg.department,
-            "frameworks":       " | ".join(
-                k.upper() for k, v in cfg.frameworks_enabled.items() if v
-            ),
-        })
+        self._data.update(
+            {
+                "teaching": cfg.teaching,
+                "approved_storage": cfg.handling.get("approved_storage", "UNSPECIFIED"),
+                "version_control": cfg.handling.get(
+                    "version_control", "prohibited unless explicitly authorized"
+                ),
+                "nation_name": cfg.name,
+                "territory_name": cfg.territory,
+                "treaty_reference": cfg.treaty_name,
+                "treaty_status": cfg.treaty_status,
+                "legal_citation": (
+                    cfg.legal_citations[0] if cfg.legal_citations else ""
+                ),
+                "stewardship_dept": cfg.department,
+                "frameworks": " | ".join(
+                    k.upper() for k, v in cfg.frameworks_enabled.items() if v
+                ),
+            }
+        )
         self._ctx = ctx
         return self
 
@@ -210,32 +242,38 @@ class ProvenanceBuilder:
         """Auto-populate source fields from the SovereigntyContext registry."""
         if hasattr(self, "_ctx"):
             src = self._ctx._sources.get(source_key, {})
-            self._data.update({
-                "data_source_name": src.get("name", source_key),
-                "data_source_url":  src.get("url", ""),
-                "data_steward":     src.get("steward", ""),
-                "license":          src.get("license", ""),
-            })
+            self._data.update(
+                {
+                    "data_source_name": src.get("name", source_key),
+                    "data_source_url": src.get("url", ""),
+                    "data_steward": src.get("steward", ""),
+                    "license": src.get("license", ""),
+                }
+            )
         return self
 
     def collected_by(
         self, org: str, method: str = "", date: str = ""
     ) -> "ProvenanceBuilder":
-        self._data.update({
-            "data_steward":     org,
-            "collection_method":method,
-            "collection_date":  date,
-        })
+        self._data.update(
+            {
+                "data_steward": org,
+                "collection_method": method,
+                "collection_date": date,
+            }
+        )
         return self
 
     def processed_by(
         self, analyst: str, org: str = "", purpose: str = ""
     ) -> "ProvenanceBuilder":
-        self._data.update({
-            "analyst_name":    analyst,
-            "analyst_org":     org,
-            "analysis_purpose":purpose,
-        })
+        self._data.update(
+            {
+                "analyst_name": analyst,
+                "analyst_org": org,
+                "analysis_purpose": purpose,
+            }
+        )
         return self
 
     def step(self, description: str) -> "ProvenanceBuilder":
@@ -258,11 +296,21 @@ class ProvenanceBuilder:
         if "dataset_name" not in self._data:
             self._data["dataset_name"] = self._data["record_id"]
         if "classification" not in self._data:
-            raise ValueError("An explicit classification is required before building a provenance record.")
+            raise ValueError(
+                (
+                    "An explicit classification is required before building a "
+                    "provenance record."
+                )
+            )
+        if hasattr(self, "_ctx"):
+            tiers = {tier["id"] for tier in self._ctx.config.classification_tiers}
+            if self._data["classification"] not in tiers:
+                raise ValueError("Classification is not in the Nation configuration")
         return ProvenanceRecord(**self._data)
 
 
 # Provenance catalog
+
 
 class ProvenanceCatalog:
     """
@@ -285,33 +333,30 @@ class ProvenanceCatalog:
         self._records.append(record)
 
     def get(self, record_id: str) -> ProvenanceRecord | None:
-        return next((r for r in self._records
-                     if r.record_id == record_id), None)
+        return next((r for r in self._records if r.record_id == record_id), None)
 
     def filter_by_nation(self, nation_name: str) -> list[ProvenanceRecord]:
         return [r for r in self._records if r.nation_name == nation_name]
 
-    def filter_by_classification(
-        self, classification: str
-    ) -> list[ProvenanceRecord]:
-        return [r for r in self._records
-                if r.classification == classification]
+    def filter_by_classification(self, classification: str) -> list[ProvenanceRecord]:
+        return [r for r in self._records if r.classification == classification]
 
     def to_dict(self) -> dict:
         return {
-            "project":  self.project_name,
-            "created":  datetime.date.today().isoformat(),
-            "standard": "IEEE 2890-2025",
-            "records":  [r.to_dict() for r in self._records],
+            "project": self.project_name,
+            "created": datetime.date.today().isoformat(),
+            "schema": "idsov-toolkit-provenance-v2",
+            "conformance": "IEEE conformance not established",
+            "records": [r.to_dict() for r in self._records],
         }
 
     def save(self, path: str | Path) -> None:
         from pathlib import Path
+
         path = Path(path)
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(
-            json.dumps(self.to_dict(), indent=2, ensure_ascii=False),
-            encoding="utf-8"
+            json.dumps(self.to_dict(), indent=2, ensure_ascii=False), encoding="utf-8"
         )
         print(f"Provenance catalog saved: {path}")
 
