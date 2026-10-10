@@ -16,6 +16,6 @@ jobs:
       - run: pip install -e ".[dev]"
       - run: ruff check toolkit tests
       - run: pytest
-      - run: pytest --nbmake Notebooks/00_orientation.ipynb Notebooks/01_frameworks.ipynb Notebooks/02_data_provenance.ipynb Notebooks/03_sovereignty_audit.ipynb Notebooks/04_collection_design.ipynb Notebooks/05_seeds_workflow.ipynb Notebooks/06_adaptation_guide.ipynb
+      - run: pytest --nbmake Notebooks/00_orientation.ipynb Notebooks/01_frameworks.ipynb Notebooks/02_data_provenance.ipynb Notebooks/03_sovereignty_audit.ipynb Notebooks/04_collection_design.ipynb Notebooks/05_seeds_workflow.ipynb Notebooks/06_adaptation_guide.ipynb Notebooks/07_care_in_practice.ipynb Notebooks/08_fair_with_controlled_access.ipynb Notebooks/09_local_contexts_labels.ipynb Notebooks/10_ieee_provenance_review.ipynb Notebooks/11_ocap_stewardship.ipynb
         env:
           IDSOV_CONFIG: config/teaching_example.yaml

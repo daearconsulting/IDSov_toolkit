@@ -24,7 +24,7 @@ designed to be modular so it can be adapted for any Tribal Nation.
 |---|---|
 | Tribal data managers and natural resource staff | [`Forms/`](Forms/) then [notebook 04](Notebooks/04_collection_design.ipynb) |
 | Researchers working with Tribal data | [Notebooks 00–03](Notebooks/) |
-| Students and educators | [Full notebook series 00–06](Notebooks/) |
+| Students and educators | [Full notebook series 00–11](Notebooks/) |
 | Hackathon and workshop participants | [Notebook 05 (SEEDS Workflow)](Notebooks/05_seeds_workflow.ipynb) |
 
 ## Repository Structure
@@ -45,7 +45,12 @@ IDSov_toolkit/
 │   ├── 03_sovereignty_audit.ipynb
 │   ├── 04_collection_design.ipynb
 │   ├── 05_seeds_workflow.ipynb  # Responsible Earth Data Science
-│   └── 06_adaptation_guide.ipynb
+│   ├── 06_adaptation_guide.ipynb
+│   ├── 07_care_in_practice.ipynb
+│   ├── 08_fair_with_controlled_access.ipynb
+│   ├── 09_local_contexts_labels.ipynb
+│   ├── 10_ieee_provenance_review.ipynb
+│   └── 11_ocap_stewardship.ipynb
 │
 ├── Forms/                      # Document toolkit (no coding required)
 │   ├── data_sovereignty_statement.md
@@ -149,7 +154,10 @@ To execute the notebooks covered by continuous integration:
 pytest --nbmake Notebooks/00_orientation.ipynb Notebooks/01_frameworks.ipynb \
   Notebooks/02_data_provenance.ipynb Notebooks/03_sovereignty_audit.ipynb \
   Notebooks/04_collection_design.ipynb Notebooks/05_seeds_workflow.ipynb \
-  Notebooks/06_adaptation_guide.ipynb
+  Notebooks/06_adaptation_guide.ipynb \
+  Notebooks/07_care_in_practice.ipynb Notebooks/08_fair_with_controlled_access.ipynb \
+  Notebooks/09_local_contexts_labels.ipynb Notebooks/10_ieee_provenance_review.ipynb \
+  Notebooks/11_ocap_stewardship.ipynb
 ```
 
 **For Nation-specific consulting assistance** such as integrating existing Tribal
@@ -221,3 +229,7 @@ entry time is separate from governance review and authorization.
 
 The existing whitepaper is a separately maintained document and may describe an
 earlier release. Current behavior is documented in these guides and tested code.
+
+## Applied framework labs
+
+Lessons 07-11 extend the core series with CARE action and reuse decisions, FAIR metadata and controlled access, Local Contexts consultation and integration, IEEE-informed provenance review, and OCAP® custody and revocation scenarios. Each runs independently and writes draft CSV/JSON artifacts under `outputs/teaching/<lesson>/`. These labs explicitly load the fictional configuration, even when a working `nation.yaml` exists. See the teaching guide for facilitation and assessment.
